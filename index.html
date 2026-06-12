@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tuan Biomass Contractor Induction - Clickable Prototype</title>
+  <style>
+    :root {
+      --ink:#16212b; --muted:#667483; --line:#d8dee5; --panel:#fff; --soft:#f4f7f8;
+      --brand:#1d5f43; --green:#6dad43; --blue:#1f5f8f; --amber:#c89400; --red:#b32924;
+      --shadow:0 12px 30px rgba(22,33,43,.1);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:#e9eef1;line-height:1.4}
+    button,input,textarea,select{font:inherit}
+    .app{min-height:100vh;display:grid;grid-template-columns:292px 1fr}
+    aside{background:#14251f;color:white;padding:24px 20px;position:sticky;top:0;height:100vh;overflow:auto}
+    .brand{display:flex;gap:12px;align-items:center;margin-bottom:22px}
+    .mark{width:42px;height:42px;border-radius:8px;background:white;display:grid;place-items:center;overflow:hidden}
+    .mark img{width:100%;height:100%;object-fit:contain}
+    .brand strong{display:block;font-size:17px}.brand span{display:block;color:#bed2c7;font-size:12px;margin-top:3px}
+    .progress-label{font-size:12px;color:#bed2c7;margin:16px 0 8px}.progress{height:8px;background:rgba(255,255,255,.16);border-radius:99px;overflow:hidden}.progress div{height:100%;width:0;background:#ffd34f;transition:.2s}
+    nav{display:grid;gap:7px;margin-top:22px}.nav-btn{border:0;background:transparent;color:#e4eee9;text-align:left;padding:10px 11px;border-radius:7px;display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:center;cursor:pointer}
+    .nav-btn.active{background:white;color:var(--ink);font-weight:700}.nav-btn.done .dot{background:#69bd6e;color:#10251c}.dot{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.16);font-size:12px}
+    main{padding:30px}.topbar{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:22px}h1{margin:0;font-size:28px;letter-spacing:0}.sub{color:var(--muted);margin-top:5px}.pill{background:white;border:1px solid var(--line);border-radius:99px;padding:8px 12px;color:var(--muted);font-size:13px;white-space:nowrap}
+    .screen{display:none;background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);overflow:hidden}.screen.active{display:block}
+    .screen-head{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.screen-head h2{margin:0;font-size:22px}.screen-head span{color:var(--muted);font-size:13px}
+    .body{padding:20px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid.three{grid-template-columns:repeat(3,1fr)}.grid.single{grid-template-columns:1fr}
+    label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}.field,input,select,textarea{width:100%;min-height:42px;border:1px solid var(--line);border-radius:6px;background:white;padding:10px;color:var(--ink)}textarea{min-height:86px;resize:vertical}.hint{color:var(--muted);font-size:13px;margin:7px 0 0}
+    .hero-img{width:100%;max-height:720px;object-fit:contain;background:#f8fafb;border:1px solid var(--line);border-radius:6px;display:block}.map-img{width:100%;border:1px solid var(--line);border-radius:6px;display:block}
+    .split{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(300px,.95fr);gap:18px;align-items:start}.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.card{border:1px solid var(--line);border-radius:8px;background:white;padding:14px}.card b{display:block;margin-bottom:5px}.card p{margin:0;color:var(--muted);font-size:14px}
+    .acks{display:grid;gap:10px;margin-top:16px}.ack{display:grid;grid-template-columns:24px 1fr;gap:10px;align-items:start;padding:11px;border:1px solid var(--line);border-radius:7px;background:var(--soft);cursor:pointer}.ack input{width:18px;min-height:18px;margin:2px 0 0;accent-color:var(--brand)}
+    .callout{border-left:5px solid var(--amber);background:#fff9e8;border-radius:8px;padding:14px;margin:14px 0}.danger{border-left-color:var(--red);background:#fff1f0}.good{border-left-color:var(--green);background:#f1faef}
+    .list{display:grid;gap:10px}.item{border:1px solid var(--line);border-radius:8px;padding:12px;background:#fff}.item strong{display:block}.item span{font-size:13px;color:var(--muted)}
+    .instruction-block{border:1px solid var(--line);border-radius:8px;background:#fff;padding:14px;margin-top:14px}.instruction-block h3{margin:0 0 10px;font-size:17px}.instruction-block ul{margin:0;padding-left:20px}.instruction-block li{margin:6px 0;color:#344250}
+    table{width:100%;border-collapse:collapse;font-size:14px}th,td{border-bottom:1px solid var(--line);text-align:left;padding:10px;vertical-align:top}th{background:#f5f7f8;color:#384552;font-size:12px;text-transform:uppercase}.mini-input{min-height:36px;padding:7px}.sig{height:48px;border:1px dashed #9aa7b3;border-radius:6px;background:white}
+    .actions{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:16px 20px;border-top:1px solid var(--line);background:#fbfcfd}.btn{border:1px solid var(--line);background:white;border-radius:7px;padding:10px 14px;font-weight:700;color:var(--ink);cursor:pointer}.btn.primary{background:var(--brand);border-color:var(--brand);color:white}.btn.ghost{background:transparent}.btn:disabled{opacity:.45;cursor:not-allowed}
+    .review{display:grid;gap:10px}.review-row{display:grid;grid-template-columns:220px 1fr;gap:12px;border-bottom:1px solid var(--line);padding:10px 0}.review-row b{color:#344250}
+    .mode-switch{display:flex;gap:8px;flex-wrap:wrap}.mode-switch .btn.active{background:var(--brand);border-color:var(--brand);color:white}.admin-view{display:none}.admin-view.active{display:block}.contractor-view.hidden{display:none}.stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}.stat{background:white;border:1px solid var(--line);border-radius:8px;padding:14px}.stat strong{display:block;font-size:24px}.badge{display:inline-flex;border-radius:999px;padding:4px 9px;font-size:12px;font-weight:700}.badge.pending{background:#fff6d7;color:#7a5700}.badge.approved{background:#e6f6e5;color:#205d24}.badge.rejected{background:#ffe8e6;color:#8a201b}.admin-actions{display:flex;gap:8px;flex-wrap:wrap}.print-record{display:none}
+    .toast{position:fixed;right:22px;bottom:22px;background:#14251f;color:#fff;border-radius:8px;padding:13px 15px;box-shadow:var(--shadow);display:none;max-width:340px}.toast.show{display:block}
+    @media print{body{background:white}.app{display:block}aside,.topbar,.actions,.toast,.screen:not(.print-active),.admin-view:not(.print-active){display:none!important}main{padding:0}.print-record{display:block!important;color:#111}.print-record h1{font-size:24px}.print-record table{page-break-inside:auto}.print-record tr{page-break-inside:avoid}}
+    @media(max-width:980px){.app{grid-template-columns:1fr}aside{position:static;height:auto}.split,.grid,.grid.three,.cards{grid-template-columns:1fr}main{padding:18px}.topbar{flex-direction:column}.review-row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="brand"><div class="mark"><img src="induction-layout-assets/auminto-logo.jpg" alt="Auminto logo"></div><div><strong>Contractor Induction</strong><span>Tuan Biomass Facility</span></div></div>
+      <div class="progress-label" id="progressText">Step 1 of 9</div>
+      <div class="progress"><div id="progressBar"></div></div>
+      <nav id="stepNav"></nav>
+    </aside>
+    <main>
+      <div class="topbar">
+        <div><h1>Online Induction Prototype</h1><div class="sub">Clickable prototype using the current paper induction content and embedded site images.</div></div>
+        <div class="mode-switch">
+          <button class="btn active" id="contractorModeBtn" type="button">Contractor form</button>
+          <button class="btn" id="adminModeBtn" type="button">Admin dashboard</button>
+          <div class="pill" id="statusPill">Draft in progress</div>
+        </div>
+      </div>
+
+      <div class="contractor-view" id="contractorView">
+      <section class="screen active" data-step="0">
+        <div class="screen-head"><div><h2>Welcome to Site</h2><span>Contractor induction to be completed before attending site.</span></div></div>
+        <div class="body split">
+          <div>
+            <div class="callout good"><b>Your safety is our priority.</b><br />By continuing, contractors confirm they will read and understand Albioma's Golden Rules and site HSE requirements before arriving.</div>
+            <div class="card" style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+              <img src="induction-layout-assets/auminto-logo.jpg" alt="Auminto logo" style="width:76px;height:76px;object-fit:contain;border:1px solid var(--line);border-radius:8px;background:white">
+              <div><b>Auminto contractor induction</b><p style="margin:4px 0 0;color:var(--muted)">Remote site induction for contractors attending the Tuan Biomass facility.</p></div>
+            </div>
+            <div class="cards">
+              <div class="card"><b>Auminto contact</b><p>Brett Stevens<br />0430 939 468<br />b.stevens@auminto.com.au</p></div>
+              <div class="card"><b>Albioma Safety Officer</b><p>Chris Foster<br />0478 774 434<br />christopher.foster@albioma.com</p></div>
+            </div>
+            <div class="instruction-block">
+              <h3>General workplace safety instructions</h3>
+              <ul>
+                <li>All contractors must comply with Albioma's Golden Rules.</li>
+                <li>All contractor employees must present valid licences, tickets and competency records relevant to their tasks.</li>
+                <li>Copies of licences, tickets and competency records will be verified and recorded before site access is granted.</li>
+                <li>For multi-day work, contractors must conduct daily toolbox talks.</li>
+                <li>Any change in conditions, including weather, simultaneous activities or temporary hazards, must be communicated immediately to workers and Albioma management.</li>
+                <li>Contractors are responsible for identifying hazards linked to their activities and providing documented control measures such as SWMS, JSA and risk assessments.</li>
+                <li>Contractors must clearly outline the roles and responsibilities of their personnel.</li>
+              </ul>
+            </div>
+            <div class="acks">
+              <label class="ack"><input type="checkbox" data-required><span>I understand this induction must be completed before I attend site.</span></label>
+            </div>
+          </div>
+          <div class="list">
+            <div class="item"><strong>What this prototype demonstrates</strong><span>Step navigation, acknowledgements, document uploads, operator signoff and final declaration flow.</span></div>
+            <div class="item"><strong>What a live app would add</strong><span>Email confirmation, PDF records, admin verification and licence expiry reminders.</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" data-step="1">
+        <div class="screen-head"><div><h2>Albioma Golden Rules</h2><span>The original poster remains visible and must be acknowledged.</span></div></div>
+        <div class="body">
+          <img class="hero-img" src="induction-layout-assets/image1.png" alt="Albioma Safety Golden Rules poster">
+          <div class="acks">
+            <label class="ack"><input type="checkbox" data-required><span>I have received and read Albioma's Golden Rules.</span></label>
+            <label class="ack"><input type="checkbox" data-required><span>I will assess my task before taking action and make sure I am safe.</span></label>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" data-step="2">
+        <div class="screen-head"><div><h2>Contractor Details</h2><span>Details used for the induction register and PDF record.</span></div></div>
+        <div class="body">
+          <div class="grid">
+            <div><label>Name of visitor / contractor</label><input id="contractorName" data-required placeholder="Full name"></div>
+            <div><label>Company</label><input id="company" data-required placeholder="Company name"></div>
+            <div><label>Email</label><input id="email" type="email" placeholder="name@company.com.au"></div>
+            <div><label>Phone</label><input id="phone" placeholder="Mobile number"></div>
+            <div><label>Date induction completed</label><input id="inductionDate" type="date"></div>
+            <div><label>Planned date(s) on site <span class="hint">(optional)</span></label><input id="siteDates" placeholder="Date or date range"></div>
+          </div>
+          <div style="margin-top:14px"><label>High risk tasks being undertaken <span class="hint">(optional)</span></label><textarea id="tasks" placeholder="Hot work, working at heights, lifting operations, plant operation, confined space, other..."></textarea><p class="hint">If major works or high-risk tasks are to be performed, the contractor should attach a current JSA or SWMS.</p></div>
+          <div class="grid" style="margin-top:14px">
+            <div><label>JSA / SWMS upload <span class="hint">(optional)</span></label><input id="swmsFile" type="file"><p class="hint">Prototype stores file names only. Live system would save files to SharePoint.</p></div>
+            <div><label>Work permit / other attachment <span class="hint">(optional)</span></label><input id="permitFile" type="file"><p class="hint">Use for hot work, heights, lifting or other required permits.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" data-step="3">
+        <div class="screen-head"><div><h2>Site Access & Boundaries</h2><span>Gate 1 and site boundary information from the current induction.</span></div></div>
+        <div class="body split">
+          <img class="map-img" src="induction-layout-assets/image2.png" alt="Site boundary and Gate 1 entry map">
+          <div>
+            <div class="callout"><b>Access rule</b><br />All access is via Gate 1, Wharf Drive, Burnett Heads.</div>
+            <div class="instruction-block">
+              <h3>Site access and movement instructions</h3>
+              <ul>
+                <li>No smoking, drugs or alcohol are permitted on site.</li>
+                <li>Sign in and sign out when attending site.</li>
+                <li>Follow all signage and instructions.</li>
+                <li>Do not enter restricted or locked-out areas without proper authorisation.</li>
+                <li>Always clean up your work area before leaving.</li>
+                <li>Mobile phone use is prohibited while walking or operating vehicles.</li>
+                <li>Stay alert for moving plant, forklifts and loaders.</li>
+                <li>When crossing or moving around the facility, contact the loader driver on UHF Channel 35.</li>
+                <li>Seat belts must be worn and all speed limits observed.</li>
+              </ul>
+            </div>
+            <div class="acks">
+              <label class="ack"><input type="checkbox" data-required><span>I will sign in and sign out when attending site.</span></label>
+              <label class="ack"><input type="checkbox" data-required><span>I will enter and exit via Gate 1, Wharf Drive, Burnett Heads.</span></label>
+              <label class="ack"><input type="checkbox" data-required><span>I understand STL land access is prohibited unless authorised and separately inducted.</span></label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" data-step="4">
+        <div class="screen-head"><div><h2>Work Controls, Permits & PPE</h2><span>Controls required before work starts.</span></div></div>
+        <div class="body">
+          <div class="grid three">
+            <div class="item"><strong>SWMS / JSA</strong><span>Required for all high-risk work to be undertaken.</span></div>
+            <div class="item"><strong>Work permits</strong><span>Required for hot work, working at heights, lifting operations and other high-risk work.</span></div>
+            <div class="item"><strong>Minimum PPE</strong><span>High-vis clothing, safety boots, hard hat or bump cap.</span></div>
+            <div class="item"><strong>Task PPE</strong><span>Respiratory protection, safety glasses, hearing protection, harnesses and other PPE identified by risk assessment.</span></div>
+            <div class="item"><strong>Lock Out / Tag Out</strong><span>Contractors must provide their own lockout/tagout devices where required.</span></div>
+            <div class="item"><strong>Plant competency</strong><span>Valid certificates must be held for plant and equipment operation.</span></div>
+          </div>
+          <div class="instruction-block">
+            <h3>Work control instructions</h3>
+            <ul>
+              <li>Contractors must provide copies of SWMS or JSAs for all high-risk work to be undertaken.</li>
+              <li>Contractors must hold and provide valid certificates of competency for all plant and equipment they intend to operate.</li>
+              <li>Work permits must be obtained before starting high-risk work, including hot work, working at heights and lifting operations.</li>
+              <li>Contractors are responsible for ensuring their workers are trained in and follow all permit conditions.</li>
+              <li>All energy sources must be fully isolated and discharged before work begins.</li>
+              <li>Use clearly identified lockout tags on master isolators.</li>
+              <li>All lifting equipment and accessories must be visually inspected before each use.</li>
+              <li>Only trained personnel may use lifting gear.</li>
+              <li>Only qualified personnel may conduct work at height. The area below overhead work must be clearly marked or barricaded.</li>
+              <li>Working outside aerial baskets is prohibited unless using double lanyard harnesses.</li>
+              <li>A hot work permit must be approved before hot work begins. Flammable materials and waste must be removed or adequately protected, and fire extinguishers or fire blankets must be readily available nearby.</li>
+            </ul>
+          </div>
+          <div class="acks">
+            <label class="ack"><input type="checkbox" data-required><span>I understand I must have current permits for hot work, working at heights and lifting operations where required.</span></label>
+            <label class="ack"><input type="checkbox" data-required><span>I have reviewed the minimum PPE requirements and will supply task-specific PPE.</span></label>
+            <label class="ack"><input type="checkbox" data-required><span>I understand the Lock Out / Tag Out requirements and will provide my own locks and tags.</span></label>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" data-step="5">
+        <div class="screen-head"><div><h2>Emergency Preparedness</h2><span>Evacuation diagram and emergency procedure acknowledgement.</span></div></div>
+        <div class="body split">
+          <img class="map-img" src="induction-layout-assets/image3.png" alt="Evacuation sign and diagram">
+          <div>
+            <div class="cards">
+              <div class="card"><b>Muster point</b><p>Southwestern corner of storage facility.</p></div>
+              <div class="card"><b>First aid kit</b><p>Located in the Smoko Room.</p></div>
+              <div class="card"><b>Fire extinguishers</b><p>Located near each exit.</p></div>
+              <div class="card"><b>Emergency</b><p>Call 000 in an emergency.</p></div>
+            </div>
+            <div class="instruction-block">
+              <h3>Emergency and reporting instructions</h3>
+              <ul>
+                <li>Contractors must ensure their teams are trained in emergency response, evacuation and first aid procedures.</li>
+                <li>Contractors are to familiarise their workers with the site muster point, first aid stations and fire extinguisher locations.</li>
+                <li>Contractors must have first aiders and kits available if their scope of work requires it.</li>
+                <li>Be alert to trip hazards, elevated work areas, moving equipment and hot surfaces.</li>
+                <li>Work involving confined spaces or hot work requires permits and the presence of a watch person.</li>
+                <li>Report any unsafe condition, behaviour or incident immediately to your supervisor.</li>
+                <li>Always comply with Albioma / Auminto policies and procedures.</li>
+                <li>Albioma and Auminto management will conduct periodic safety visits with contractors to check compliance with HSE requirements.</li>
+              </ul>
+            </div>
+            <div class="acks">
+              <label class="ack"><input type="checkbox" data-required><span>I have received emergency procedure information.</span></label>
+              <label class="ack"><input type="checkbox" data-required><span>I understand the evacuation route and assembly area shown in the diagram.</span></label>
+              <label class="ack"><input type="checkbox" data-required><span>I will report unsafe conditions, behaviour or incidents immediately.</span></label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" data-step="6">
+        <div class="screen-head"><div><h2>Licence / Ticket Verification</h2><span>Attach copies in the live app; this prototype records the expected fields.</span></div><button class="btn primary" id="addLicence" type="button">Add licence</button></div>
+        <div class="body">
+          <table>
+            <thead><tr><th>Licence / ticket type</th><th>Expiry date</th><th>Photo attached</th><th></th></tr></thead>
+            <tbody id="licenceRows"></tbody>
+          </table>
+          <p class="hint">Common entries: Forklift, EWP, Front end loader, Working at heights, First aid, Other.</p>
+        </div>
+      </section>
+
+      <section class="screen" data-step="7">
+        <div class="screen-head"><div><h2>Operator Signoff Sheet</h2><span>Add each operator attending site under this contractor.</span></div><button class="btn primary" id="addOperator" type="button">Add operator</button></div>
+        <div class="body">
+          <table>
+            <thead><tr><th>Operator</th><th>Company / role</th><th>Contact</th><th>Licences held</th><th>Emergency contact</th><th>Signature</th><th></th></tr></thead>
+            <tbody id="operatorRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="screen" data-step="8">
+        <div class="screen-head"><div><h2>Final Declaration & Review</h2><span>Review the induction record before submission.</span></div></div>
+        <div class="body">
+          <div class="review" id="reviewPanel"></div>
+          <div class="acks">
+            <label class="ack"><input type="checkbox" data-required><span>I have read and understood Albioma's Golden Rules and site HSE requirements.</span></label>
+            <label class="ack"><input type="checkbox" data-required><span>I will comply with all site rules and provide required SWMS, JSA, licences, competency records and permits before commencing work.</span></label>
+            <label class="ack"><input type="checkbox" data-required><span>I understand non-compliance may result in work stoppage, corrective actions or removal from site.</span></label>
+          </div>
+          <div class="grid" style="margin-top:14px">
+            <div><label>Contractor representative signature</label><input id="signatureName" data-required placeholder="Type full name as signature"></div>
+            <div><label>Date</label><input id="signatureDate" type="date"></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="actions">
+        <button class="btn" id="backBtn" type="button">Back</button>
+        <button class="btn ghost" id="saveBtn" type="button">Save draft</button>
+        <button class="btn primary" id="nextBtn" type="button">Continue</button>
+      </div>
+      </div>
+
+      <section class="admin-view screen active" id="adminView">
+        <div class="screen-head"><div><h2>Admin Dashboard</h2><span>Review submitted inductions, approve access, reject incomplete records, or print an audit summary.</span></div><button class="btn" id="clearDemoBtn" type="button">Clear demo data</button></div>
+        <div class="body">
+          <div class="stat-grid">
+            <div class="stat"><strong id="statTotal">0</strong><span>Total submissions</span></div>
+            <div class="stat"><strong id="statPending">0</strong><span>Pending review</span></div>
+            <div class="stat"><strong id="statApproved">0</strong><span>Approved</span></div>
+            <div class="stat"><strong id="statRejected">0</strong><span>Rejected</span></div>
+          </div>
+          <table>
+            <thead><tr><th>Submitted</th><th>Contractor</th><th>Company</th><th>Site dates</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="submissionRows"></tbody>
+          </table>
+          <div class="instruction-block">
+            <h3>SharePoint / Power Apps field mapping</h3>
+            <ul>
+              <li><b>Induction Register:</b> ContractorName, Company, Email, Phone, SiteDates, HighRiskTasks, SWMSFile, PermitFile, Status, SubmittedDate, ApprovedBy, ReviewNotes.</li>
+              <li><b>Operator Register:</b> InductionID, OperatorName, CompanyRole, Contact, LicencesHeld, EmergencyContact, SignatureCaptured.</li>
+              <li><b>Licence Register:</b> InductionID, LicenceType, ExpiryDate, PhotoAttached, UploadedFileLink, VerifiedBy, VerificationDate.</li>
+              <li><b>Document Library:</b> store SWMS, JSA, licences, permits and generated PDF records against the InductionID.</li>
+            </ul>
+          </div>
+          <div class="review" id="selectedSubmission"></div>
+        </div>
+      </section>
+
+      <section class="print-record" id="printRecord"></section>
+    </main>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+  <script>
+    const steps = ["Welcome","Golden Rules","Contractor Details","Site Access","Permits & PPE","Emergency","Licences","Operator Signoff","Declaration"];
+    const draftKey = "aumintoInductionDraft";
+    const submissionsKey = "aumintoInductionSubmissions";
+    let current = 0;
+    const nav = document.getElementById("stepNav");
+    const screens = [...document.querySelectorAll(".screen")];
+    const progressBar = document.getElementById("progressBar");
+    const progressText = document.getElementById("progressText");
+    const statusPill = document.getElementById("statusPill");
+    const toast = document.getElementById("toast");
+    const today = new Date().toISOString().slice(0,10);
+    document.getElementById("inductionDate").value = today;
+    document.getElementById("signatureDate").value = today;
+
+    steps.forEach((name, i) => {
+      const btn = document.createElement("button");
+      btn.className = "nav-btn";
+      btn.type = "button";
+      btn.innerHTML = `<span class="dot">${i + 1}</span><span>${name}</span>`;
+      btn.addEventListener("click", () => go(i));
+      nav.appendChild(btn);
+    });
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(() => toast.classList.remove("show"), 2600);
+    }
+
+    function getSubmissions() {
+      try { return JSON.parse(localStorage.getItem(submissionsKey) || "[]"); }
+      catch { return []; }
+    }
+
+    function setSubmissions(items) {
+      localStorage.setItem(submissionsKey, JSON.stringify(items));
+    }
+
+    function rowValues(selector) {
+      return [...document.querySelectorAll(selector)].map(row =>
+        [...row.querySelectorAll("input,select")].map(el => el.type === "file" ? (el.files[0]?.name || "") : el.value)
+      );
+    }
+
+    function collectRecord(status = "Pending review") {
+      return {
+        id: "IND-" + Date.now(),
+        submittedAt: new Date().toLocaleString(),
+        status,
+        contractorName: document.getElementById("contractorName").value,
+        company: document.getElementById("company").value,
+        email: document.getElementById("email").value,
+        phone: document.getElementById("phone").value,
+        inductionDate: document.getElementById("inductionDate").value,
+        siteDates: document.getElementById("siteDates").value,
+        tasks: document.getElementById("tasks").value,
+        swmsFile: document.getElementById("swmsFile").files[0]?.name || "",
+        permitFile: document.getElementById("permitFile").files[0]?.name || "",
+        signatureName: document.getElementById("signatureName").value,
+        signatureDate: document.getElementById("signatureDate").value,
+        licences: rowValues("#licenceRows tr"),
+        operators: rowValues("#operatorRows tr")
+      };
+    }
+
+    function saveDraft() {
+      const draft = collectRecord("Draft");
+      draft.currentStep = current;
+      draft.acknowledgements = [...document.querySelectorAll(".screen input[type='checkbox']")].map(el => el.checked);
+      localStorage.setItem(draftKey, JSON.stringify(draft));
+      showToast("Draft saved on this device.");
+    }
+
+    function loadDraft() {
+      const raw = localStorage.getItem(draftKey);
+      if (!raw) return;
+      try {
+        const d = JSON.parse(raw);
+        ["contractorName","company","email","phone","inductionDate","siteDates","tasks","signatureName","signatureDate"].forEach(id => {
+          if (d[id] !== undefined && document.getElementById(id)) document.getElementById(id).value = d[id] || "";
+        });
+        [...document.querySelectorAll(".screen input[type='checkbox']")].forEach((el, i) => { el.checked = !!d.acknowledgements?.[i]; });
+        current = Math.max(0, Math.min(steps.length - 1, d.currentStep || 0));
+      } catch {}
+    }
+
+    function requiredInStep(index) {
+      return [...screens[index].querySelectorAll("[data-required]")];
+    }
+
+    function stepComplete(index) {
+      const required = requiredInStep(index);
+      return required.length > 0 && required.every(el => el.type === "checkbox" ? el.checked : String(el.value || "").trim());
+    }
+
+    function updateReview() {
+      const rows = [
+        ["Contractor", document.getElementById("contractorName").value || "Not entered"],
+        ["Company", document.getElementById("company").value || "Not entered"],
+        ["Email / phone", `${document.getElementById("email").value || "Not entered"} / ${document.getElementById("phone").value || "Not entered"}`],
+        ["Planned site dates", document.getElementById("siteDates").value || "Not entered"],
+        ["High risk tasks", document.getElementById("tasks").value || "None entered"],
+        ["JSA / SWMS file", document.getElementById("swmsFile").files[0]?.name || "Not attached"],
+        ["Permit / other file", document.getElementById("permitFile").files[0]?.name || "Not attached"],
+        ["Licence rows", document.querySelectorAll("#licenceRows tr").length],
+        ["Operator signoffs", document.querySelectorAll("#operatorRows tr").length],
+        ["PDF record", "Generated on submission in the live system"]
+      ];
+      document.getElementById("reviewPanel").innerHTML = rows.map(([k,v]) => `<div class="review-row"><b>${k}</b><span>${v}</span></div>`).join("");
+    }
+
+    function showMode(mode) {
+      const admin = mode === "admin";
+      document.getElementById("contractorView").classList.toggle("hidden", admin);
+      document.getElementById("adminView").classList.toggle("active", admin);
+      document.getElementById("contractorModeBtn").classList.toggle("active", !admin);
+      document.getElementById("adminModeBtn").classList.toggle("active", admin);
+      if (admin) renderAdmin();
+    }
+
+    function statusBadge(status) {
+      const klass = status === "Approved" ? "approved" : status === "Rejected" ? "rejected" : "pending";
+      return `<span class="badge ${klass}">${status}</span>`;
+    }
+
+    function renderRecord(item) {
+      const licences = item.licences?.map(r => `<tr><td>${r[0] || ""}</td><td>${r[1] || ""}</td><td>${r[2] || ""}</td></tr>`).join("") || "";
+      const operators = item.operators?.map(r => `<tr><td>${r[0] || ""}</td><td>${r[1] || ""}</td><td>${r[2] || ""}</td><td>${r[3] || ""}</td><td>${r[4] || ""}</td></tr>`).join("") || "";
+      return `
+        <h1>Auminto Contractor Induction Record</h1>
+        <div class="review-row"><b>Induction ID</b><span>${item.id}</span></div>
+        <div class="review-row"><b>Status</b><span>${item.status}</span></div>
+        <div class="review-row"><b>Contractor</b><span>${item.contractorName || ""}</span></div>
+        <div class="review-row"><b>Company</b><span>${item.company || ""}</span></div>
+        <div class="review-row"><b>Email / phone</b><span>${item.email || ""} / ${item.phone || ""}</span></div>
+        <div class="review-row"><b>Site dates</b><span>${item.siteDates || ""}</span></div>
+        <div class="review-row"><b>High risk tasks</b><span>${item.tasks || ""}</span></div>
+        <div class="review-row"><b>Attachments</b><span>SWMS/JSA: ${item.swmsFile || "Not attached"}<br>Permit/other: ${item.permitFile || "Not attached"}</span></div>
+        <h2>Licences / Tickets</h2><table><thead><tr><th>Type</th><th>Expiry</th><th>Photo attached</th></tr></thead><tbody>${licences}</tbody></table>
+        <h2>Operators</h2><table><thead><tr><th>Name</th><th>Company / role</th><th>Contact</th><th>Licences</th><th>Emergency contact</th></tr></thead><tbody>${operators}</tbody></table>
+        <div class="review-row"><b>Declaration</b><span>Signed by ${item.signatureName || ""} on ${item.signatureDate || ""}</span></div>`;
+    }
+
+    function renderAdmin() {
+      const items = getSubmissions();
+      document.getElementById("statTotal").textContent = items.length;
+      document.getElementById("statPending").textContent = items.filter(i => i.status === "Pending review").length;
+      document.getElementById("statApproved").textContent = items.filter(i => i.status === "Approved").length;
+      document.getElementById("statRejected").textContent = items.filter(i => i.status === "Rejected").length;
+      document.getElementById("submissionRows").innerHTML = items.length ? items.map(item => `
+        <tr>
+          <td>${item.submittedAt}</td>
+          <td>${item.contractorName || "Not entered"}</td>
+          <td>${item.company || "Not entered"}</td>
+          <td>${item.siteDates || "Not entered"}</td>
+          <td>${statusBadge(item.status)}</td>
+          <td><div class="admin-actions">
+            <button class="btn" type="button" data-action="view" data-id="${item.id}">View</button>
+            <button class="btn" type="button" data-action="approve" data-id="${item.id}">Approve</button>
+            <button class="btn" type="button" data-action="reject" data-id="${item.id}">Reject</button>
+            <button class="btn" type="button" data-action="print" data-id="${item.id}">Print</button>
+          </div></td>
+        </tr>`).join("") : `<tr><td colspan="6">No submitted inductions yet. Complete the contractor form and submit to create a demo record.</td></tr>`;
+      document.getElementById("selectedSubmission").innerHTML = "";
+    }
+
+    function viewSubmission(id) {
+      const item = getSubmissions().find(x => x.id === id);
+      if (item) document.getElementById("selectedSubmission").innerHTML = renderRecord(item);
+    }
+
+    function updateSubmissionStatus(id, status) {
+      const items = getSubmissions();
+      const item = items.find(x => x.id === id);
+      if (item) item.status = status;
+      setSubmissions(items);
+      renderAdmin();
+      showToast(`Submission ${status.toLowerCase()}.`);
+    }
+
+    function printSubmission(id) {
+      const item = getSubmissions().find(x => x.id === id);
+      if (!item) return;
+      const printRecord = document.getElementById("printRecord");
+      printRecord.innerHTML = renderRecord(item);
+      printRecord.classList.add("print-active");
+      window.print();
+      setTimeout(() => printRecord.classList.remove("print-active"), 500);
+    }
+
+    function render(scrollToTop = true) {
+      screens.forEach((s, i) => s.classList.toggle("active", i === current));
+      [...nav.children].forEach((btn, i) => {
+        btn.classList.toggle("active", i === current);
+        btn.classList.toggle("done", stepComplete(i));
+      });
+      progressText.textContent = `Step ${current + 1} of ${steps.length}`;
+      progressBar.style.width = `${((current + 1) / steps.length) * 100}%`;
+      document.getElementById("backBtn").disabled = current === 0;
+      document.getElementById("nextBtn").textContent = current === steps.length - 1 ? "Submit induction" : "Continue";
+      statusPill.textContent = `${steps.filter((_, i) => stepComplete(i)).length} of ${steps.length} steps complete`;
+      if (current === steps.length - 1) updateReview();
+      if (scrollToTop) window.scrollTo({top:0, behavior:"smooth"});
+    }
+
+    function go(index) {
+      current = Math.max(0, Math.min(steps.length - 1, index));
+      render();
+    }
+
+    function next() {
+      if (!stepComplete(current)) {
+        showToast("Complete the required fields and acknowledgements on this step before continuing.");
+        return;
+      }
+      if (current === steps.length - 1) {
+        const record = collectRecord();
+        const submissions = getSubmissions();
+        submissions.unshift(record);
+        setSubmissions(submissions);
+        localStorage.removeItem(draftKey);
+        showToast("Induction submitted. Demo record added to the admin dashboard.");
+        statusPill.textContent = "Prototype submitted";
+        showMode("admin");
+        return;
+      }
+      go(current + 1);
+    }
+
+    function addLicence(type = "") {
+      const row = document.createElement("tr");
+      row.innerHTML = `<td><input class="mini-input" placeholder="Forklift, EWP, loader..." value="${type}"></td><td><input class="mini-input" type="date"></td><td><select class="mini-input"><option>Yes</option><option selected>No</option><option>N/A</option></select></td><td><button class="btn" type="button">Remove</button></td>`;
+      row.querySelector("button").addEventListener("click", () => row.remove());
+      document.getElementById("licenceRows").appendChild(row);
+    }
+
+    function addOperator() {
+      const row = document.createElement("tr");
+      row.innerHTML = `<td><input class="mini-input" placeholder="Full name"></td><td><input class="mini-input" placeholder="Company / role"></td><td><input class="mini-input" placeholder="Mobile / email"></td><td><input class="mini-input" placeholder="Tickets held"></td><td><input class="mini-input" placeholder="Name / phone"></td><td><div class="sig"></div></td><td><button class="btn" type="button">Remove</button></td>`;
+      row.querySelector("button").addEventListener("click", () => row.remove());
+      document.getElementById("operatorRows").appendChild(row);
+    }
+
+    document.getElementById("backBtn").addEventListener("click", () => go(current - 1));
+    document.getElementById("nextBtn").addEventListener("click", next);
+    document.getElementById("saveBtn").addEventListener("click", saveDraft);
+    document.getElementById("contractorModeBtn").addEventListener("click", () => showMode("contractor"));
+    document.getElementById("adminModeBtn").addEventListener("click", () => showMode("admin"));
+    document.getElementById("clearDemoBtn").addEventListener("click", () => { localStorage.removeItem(submissionsKey); renderAdmin(); showToast("Demo submissions cleared."); });
+    document.getElementById("submissionRows").addEventListener("click", (event) => {
+      const btn = event.target.closest("button[data-action]");
+      if (!btn) return;
+      const id = btn.dataset.id;
+      if (btn.dataset.action === "view") viewSubmission(id);
+      if (btn.dataset.action === "approve") updateSubmissionStatus(id, "Approved");
+      if (btn.dataset.action === "reject") updateSubmissionStatus(id, "Rejected");
+      if (btn.dataset.action === "print") printSubmission(id);
+    });
+    document.getElementById("addLicence").addEventListener("click", () => addLicence());
+    document.getElementById("addOperator").addEventListener("click", addOperator);
+    document.addEventListener("input", () => { if (current === steps.length - 1) updateReview(); statusPill.textContent = `${steps.filter((_, i) => stepComplete(i)).length} of ${steps.length} steps complete`; });
+    document.addEventListener("change", () => { render(false); });
+    ["Forklift","EWP","Front end loader","Working at heights","First aid"].forEach(addLicence);
+    addOperator();
+    loadDraft();
+    render();
+  </script>
+</body>
+</html>
